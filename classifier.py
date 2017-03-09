@@ -5,7 +5,7 @@ import numpy as np
 class Classifier:
 
 	def __init__(self):
-		pass
+		self.train_on_data()
 
 	def train_on_data(self):
 		file = open("data.txt", "r")
@@ -20,16 +20,18 @@ class Classifier:
 			output.append(np.array(line).astype(np.float))
 		file.close()
 
-		neigh = KNeighborsClassifier(n_neighbors=5)
-		neigh.fit(output, labels)
+		self.neigh = KNeighborsClassifier(n_neighbors=5)
+		self.neigh.fit(output, labels)
 
 	def predict_user(self, input_data, user):
-		predicted_user = neigh.predict([[input_data]]);
+		print input_data
+		predicted_user = self.neigh.predict([input_data])
+		print predicted_user
 
 		if predicted_user == user:
-			return true
-		else 
-			return false
+			return True
+		else:
+			return False
 
 
 

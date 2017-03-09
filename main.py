@@ -2,16 +2,20 @@ from profile import *
 from preprocess import *
 from listener import *
 from classifier import *
+from knn import *
+import numpy as np
 import os
 
 datafile = 'data.txt'
 phrase = '.tie5roanl'
 clear = lambda: os.system('cls')
 
-p = Profile(datafile)
+#p = Profile(datafile)
 pp = Preprocess()
 l = Listener()
 c = Classifier()
+#knn = knn()
+#knn.train(p.data, p.labels)
 
 def login():
 	user = raw_input('user: ')
@@ -27,8 +31,16 @@ def login():
 
 	times = pp.preprocess(events)
 
-	# do AI
-	# display result
+	#indata = np.array([times], dtype=float)
+
+	prediction = c.predict_user(times, user)#knn.predict(indata)
+
+	if prediction:
+		print 'prediction was correct'
+	else:
+		print 'prediction was wrong'
+
+	#print 'prediction: ' + prediction[0]
 
 	#p.add_data(user, times)
 
@@ -44,7 +56,7 @@ def create_profile():
 	training_times = []
 
 	i = 0
-	while i < 3:
+	while i < 7:
 		print 'type the phrase ('+str(i+1)+' of 3 times)'
 		events = l.listen(phrase)
 		

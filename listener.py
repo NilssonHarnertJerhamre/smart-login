@@ -2,7 +2,6 @@ from pynput import keyboard
 from time import time
 from type import *
 from event import *
-from msvcrt import getch
 
 class Listener:
 
