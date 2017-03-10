@@ -4,35 +4,52 @@ import numpy as np
 
 class Classifier:
 
-	def __init__(self):
+	n_neighbors = 5
+
+	labels = []
+	output = []
+
+	def __init__(self, datafile):
+		self.datafile = datafile
+		self.load_data_from_file()
 		self.train_on_data()
 
-	def train_on_data(self):
-		file = open("data.txt", "r")
-		n_users = 50
+	def load_data_from_file(self):
+
+		file = open(self.datafile, "r")
 		output = []
 		labels = []
 
-		for line in file.readlines()[1:]:
+		for line in file.readlines():
 			line = line.strip().split()
-			labels.append(line[0])
+			self.labels.append(line[0])
 			line.pop(0)
-			output.append(np.array(line).astype(np.float))
+			self.output.append(np.array(line).astype(np.float))
+		file.close()
+		
+	def train_on_data(self):
+		self.neigh = KNeighborsClassifier(n_neighbors=self.n_neighbors)
+		self.neigh.fit(self.output, self.labels)
+
+	def predict_user(self, input_data):
+		return self.neigh.predict([input_data])
+
+	def add_data(self, data, user):
+		with open(self.datafile, 'a') as file:
+			s = '\n' + str(user) + '\t' + '\t'.join(str(x) for x in data)
+			file.write(s)
 		file.close()
 
-		self.neigh = KNeighborsClassifier(n_neighbors=5)
-		self.neigh.fit(output, labels)
+		self.labels.append(user)
+		self.output.append(np.array(data).astype(np.float))
 
-	def predict_user(self, input_data, user):
-		print input_data
-		predicted_user = self.neigh.predict([input_data])
-		print predicted_user
+		self.train_on_data()
 
-		if predicted_user == user:
+	def profile_exists(self, user):
+		if user in self.labels:
 			return True
 		else:
 			return False
-
 
 
 

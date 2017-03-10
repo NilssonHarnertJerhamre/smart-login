@@ -8,14 +8,12 @@ import os
 
 datafile = 'data.txt'
 phrase = '.tie5roanl'
+samples_for_new_profile = 7
 clear = lambda: os.system('cls')
 
-#p = Profile(datafile)
 pp = Preprocess()
 l = Listener()
-c = Classifier()
-#knn = knn()
-#knn.train(p.data, p.labels)
+c = Classifier(datafile)
 
 def login():
 	user = raw_input('user: ')
@@ -26,38 +24,33 @@ def login():
 			input += e.char.encode('utf-8')
 
 	if input != phrase:
-		raw_input('wrong phrase <enter to continue>')
+		raw_input('wrong phrase \n<enter to continue>')
 		return
 
 	times = pp.preprocess(events)
 
-	#indata = np.array([times], dtype=float)
+	prediction = c.predict_user(times)
 
-	prediction = c.predict_user(times, user)#knn.predict(indata)
+	print 'chosen profile is \'' + str(user) + '\' prediction was \'' + str(prediction[0]) + '\''
 
-	if prediction:
-		print 'prediction was correct'
-	else:
-		print 'prediction was wrong'
-
-	#print 'prediction: ' + prediction[0]
-
-	#p.add_data(user, times)
+	if str(user) == str(prediction[0]):
+		c.add_data(times, user)
+		c.train_on_data()
 
 	raw_input('<enter to continue>')
 
 def create_profile():
 	user = raw_input('user: ')
 
-	if p.profile_exists(user):
+	if c.profile_exists(user):
 		raw_input('profile already exists <enter to continue>')
 		return
 
 	training_times = []
 
 	i = 0
-	while i < 7:
-		print 'type the phrase ('+str(i+1)+' of 3 times)'
+	while i < samples_for_new_profile:
+		print 'type the phrase ('+str(i+1)+' of '+str(samples_for_new_profile)+' times)'
 		events = l.listen(phrase)
 		
 		s = ''
@@ -73,10 +66,10 @@ def create_profile():
 		i+=1
 
 	for t in training_times:
-		p.add_data(user, t)
+		c.add_data(t, user)
 
 while 1:
-	#clear()
+	clear()
 	print 'smart login\n'
 	print '1.\tlogin'
 	print '2.\tcreate profile'

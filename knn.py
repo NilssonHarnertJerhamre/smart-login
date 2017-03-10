@@ -1,3 +1,9 @@
+''' 
+
+legacy code 
+
+'''
+
 import numpy as np
 
 class knn:
